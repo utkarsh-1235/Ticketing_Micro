@@ -2,7 +2,7 @@ import express  from "express";
 
 const Router = express.Router();
 
-Router.get('/currentuser', ()=>{
+Router.get('api/users/currentuser', (req, res)=>{
 
 })
 
