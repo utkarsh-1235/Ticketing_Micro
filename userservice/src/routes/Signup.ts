@@ -1,5 +1,7 @@
 import express, {Request, Response} from 'express';
 import { body, validationResult } from 'express-validator';
+import { RequestValidationError } from '../middlewares/Request-validation.error';
+import { DatabaseConnectionError } from '../middlewares/Databaseconnection.error';
 const Router = express.Router();
 
 Router.post('/api/users/signup',[
@@ -14,16 +16,16 @@ Router.post('/api/users/signup',[
     const errors = validationResult(req);
 
     if(!errors.isEmpty()){
-        const error = new Error('Inavalid email or passowrd');
-        error.reasons = errors.array();
-        throw error;
-        
+       
+       throw new RequestValidationError(errors.array()); 
     }
     const {email, password} = req.body;
 
     if(!email || typeof name !== 'string'){
         throw new Error('Please provide valid Email');
     }
+
+    throw new DatabaseConnectionError();
     res.send({});
 })
 
