@@ -23,6 +23,8 @@ app.use(cookieSession({
     secure: trusted
 }));
 
+app.use(morgan('dev'));
+
 app.use(SignUpRouter);
 app.use(SignOutRouter);
 app.use(CurrentUserRouter);

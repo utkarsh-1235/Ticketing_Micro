@@ -1,8 +1,8 @@
 import express, {Request, Response} from 'express';
-import { body } from 'express-validator';
+import { body, validationResult } from 'express-validator';
 const Router = express.Router();
 
-Router.post('/api/users/signout',[
+Router.post('/api/users/signup',[
     body('email')
     .isEmail()
     .withMessage('Email must be valid'),
@@ -11,11 +11,20 @@ Router.post('/api/users/signout',[
     .isLength({min: 4, max: 20})
     .withMessage('Password must be between 4 and 20 characters')
 ],(req: Request, res: Response)=>{
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()){
+        const error = new Error('Inavalid email or passowrd');
+        error.reasons = errors.array();
+        throw error;
+        
+    }
     const {email, password} = req.body;
 
     if(!email || typeof name !== 'string'){
-        return res.status(400).send('Please provide valid email');
+        throw new Error('Please provide valid Email');
     }
+    res.send({});
 })
 
 export {Router as SignUpRouter};
