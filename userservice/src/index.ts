@@ -4,10 +4,13 @@ import { trusted } from 'mongoose';
 import cookieSession from 'cookie-session';
 import cookieParser from 'cookie-parser';   
 import morgan from 'morgan';
+import mongoose from 'mongoose';
 import { SignUpRouter } from './routes/Signup';
 import { SignOutRouter } from './routes/Signout';
 import { CurrentUserRouter } from './routes/Currentuser';
 import { SignInRouter } from './routes/Signin';
+import { NotFound } from '../error/NotFound.error';
+import { errorHandler } from './middlewares/error-handler';
 
 const app = express();
 dotenv.config();
@@ -24,7 +27,24 @@ app.use(cookieSession({
 }));
 
 app.use(morgan('dev'));
+app.get('*', ()=>{
+    throw new NotFound();
+})
 
+app.use(errorHandler);
+
+const start = async()=>{
+    try{
+    await mongoose.connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true,});
+        console.log('Connected to MongoDB');
+    }
+    catch(err){
+        console.error(err);
+    }
+}
 app.use(SignUpRouter);
 app.use(SignOutRouter);
 app.use(CurrentUserRouter);
@@ -34,5 +54,6 @@ app.listen(Port, ()=>{
     console.log(`Server is running on port ${Port}`)
 })
 
+start();
 
 module.exports = app;
