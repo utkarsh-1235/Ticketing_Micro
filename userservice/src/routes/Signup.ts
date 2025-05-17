@@ -1,7 +1,7 @@
 import express, {Request, Response} from 'express';
 import { body, validationResult } from 'express-validator';
-import { RequestValidationError } from '../middlewares/Request-validation.error';
-import { DatabaseConnectionError } from '../middlewares/Databaseconnection.error';
+import { RequestValidationError } from '../../error/Request-validation.error';
+import { DatabaseConnectionError } from '../../error/Databaseconnection.error';
 const Router = express.Router();
 
 Router.post('/api/users/signup',[

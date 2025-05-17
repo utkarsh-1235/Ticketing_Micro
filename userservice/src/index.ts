@@ -12,7 +12,7 @@ import { SignInRouter } from './routes/Signin';
 import { NotFound } from '../error/NotFound.error';
 import { errorHandler } from './middlewares/error-handler';
 
-const app = express();
+const app = express(); 
 dotenv.config();
 const Port = 4000;
 app.set('trust proxy', true); // trust first proxy
@@ -35,11 +35,10 @@ app.use(errorHandler);
 
 const start = async()=>{
     try{
-    await mongoose.connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true,});
-        console.log('Connected to MongoDB');
+    await mongoose.connect(process.env.MONGO_URI)
+        .then(()=> console.log('Connected to MongoDB'))
+        .catch((err)=> console.error(err))
+        
     }
     catch(err){
         console.error(err);
