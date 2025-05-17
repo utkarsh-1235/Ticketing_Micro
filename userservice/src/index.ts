@@ -9,7 +9,7 @@ import { SignUpRouter } from './routes/Signup';
 import { SignOutRouter } from './routes/Signout';
 import { CurrentUserRouter } from './routes/Currentuser';
 import { SignInRouter } from './routes/Signin';
-import { NotFound } from '../error/NotFound.error';
+import { NotFound } from './error/NotFound.error';
 import { errorHandler } from './middlewares/error-handler';
 
 const app = express(); 
