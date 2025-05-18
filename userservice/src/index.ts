@@ -14,7 +14,7 @@ import { errorHandler } from './middlewares/error-handler';
 
 const app = express(); 
 dotenv.config();
-const Port = 4000;
+const Port = process.env.PORT;
 app.set('trust proxy', true); // trust first proxy
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -35,6 +35,9 @@ app.use(errorHandler);
 
 const start = async()=>{
     try{
+        if(!process.env.JET_KEY){
+            throw new Error("JWT_KEY must be defined");
+        }
     await mongoose.connect(process.env.MONGO_URI)
         .then(()=> console.log('Connected to MongoDB'))
         .catch((err)=> console.error(err))
