@@ -42,10 +42,10 @@ spec:
           env:
             - name: MONGO_URI
               value: mongodb://mongo-service:27017/auth
-            - name: JWT_SECRET
+            - name: JWT_KEY
               value: secretkey
             - name: JWT_EXPIRY
-              value: 1h
+              value: 10m
             - name: PORT
               value: "3001"
           ports:
