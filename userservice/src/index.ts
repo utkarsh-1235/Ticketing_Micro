@@ -1,27 +1,36 @@
-import {app} from './server'
-import mongoose from 'mongoose';
+// src/app.ts
+import express from 'express';
 import dotenv from 'dotenv';
+import morgan from 'morgan';
+import cookieSession from 'cookie-session';
+import cookieParser from 'cookie-parser';
+
+// Route imports
+import getUserRoute from './routes/getUserRoute';
+import signUpRoute from './routes/SignUpRoute';
+import logoutRoute from './routes/logoutRoute';
+import loginRoute from './routes/LoginRoute';
+import addressRoute from './routes/AddressRoute';
+
 dotenv.config();
-const Port = process.env.PORT;
 
-const start = async()=>{
-    try{
-        if(!process.env.JWT_KEY){
-            throw new Error("JWT_KEY must be defined");
-        }
-    await mongoose.connect(process.env.MONGO_URI)
-        .then(()=> console.log('Connected to MongoDB'))
-        .catch((err)=> console.error(err))
-        
-    }
-    catch(err){
-        console.error(err);
-    }
-}
+const app = express();
 
-app.listen(Port, ()=>{
-    console.log(`Server is running on port ${Port}`)
-})
+app.set('trust proxy', true);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+app.use(cookieParser());
 
-start();
+app.use(cookieSession({
+  signed: false,
+  secure: process.env.NODE_ENV !== 'development'
+}));
 
+app.use('/api/users', signUpRoute);
+app.use('/api/users', loginRoute);
+app.use('/api/users', addressRoute);
+app.use('/api/users', logoutRoute);
+app.use('/api/users', getUserRoute);
+
+export { app };
