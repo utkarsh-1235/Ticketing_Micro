@@ -4,7 +4,9 @@ import { RequestValidationError } from '../error/Request-validation.error';
 import { DatabaseConnectionError } from '../error/Databaseconnection.error';
 import { userModel } from '../models/userModel';
 import jwt from 'jsonwebtoken';
-import { BadRequestError } from '../error/BadRequest.Error';
+import { BadRequest } from '../error/BadRequest.Error';
+import dotenv from 'dotenv';
+dotenv.config();
 const Router = express.Router();
 
 Router.post('/api/users/signup',[
@@ -31,7 +33,7 @@ Router.post('/api/users/signup',[
      const existingUser = await userModel.findOne({email});
 
      if(existingUser){
-          throw new BadRequestError('Email already in use');
+          throw new BadRequest();
      }
 
      const user = userModel.build({
@@ -41,6 +43,9 @@ Router.post('/api/users/signup',[
 
      await user.save();
 
+     if (!process.env.JWT_KEY) {
+        throw new Error('JWT_KEY must be defined');
+     }
      const userJwt = jwt.sign({
         id: user.id,
         email: user.email

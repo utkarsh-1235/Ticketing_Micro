@@ -1,27 +1,29 @@
-import {MongoMemoryServer} from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import {app} from '../../src/index';
-import request from 'supertest';
-import {userModel} from '../../src/models/userModel';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
-const beforeAll = async () => {
-    const mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
-    
-    await mongoose.connect(mongoUri);
-    
-    }
+jest.setTimeout(30000); // ✅ increase timeout to 30s
 
-    const beforeEach = async () => {
-    const collections = await mongoose.connection.db?.collections();
+let mongoServer: MongoMemoryServer;
 
-    if (collections) {
-        for(const collection of collections){
-            await collection.deleteMany({});
-        }
-    }
-    }
+beforeAll(async () => {
+  mongoServer = await MongoMemoryServer.create(); // ✅ starts the server
+  const mongoUri = mongoServer.getUri();
 
-    const afterAll = async() => {
-        await mongoose.connection.close();
+  await mongoose.connect(mongoUri);
+});
+
+afterAll(async () => {
+  if (mongoServer) {
+    await mongoServer.stop(); // ✅ only if defined
+  }
+  await mongoose.connection.close();
+});
+
+afterEach(async () => {
+  const collections = await mongoose.connection.db?.collections();
+  if (collections) {
+    for (let collection of collections) {
+      await collection.deleteMany({});
     }
+  }
+});

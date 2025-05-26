@@ -3,7 +3,7 @@ import {body, validationResult} from 'express-validator';
 import { RequestValidationError } from '../error/Request-validation.error';
 import { validateRequest } from '../middlewares/validateRequest';
 import { userModel } from '../models/userModel';
-import { BadRequestError } from '../error/BadRequest.Error';
+import { BadRequest} from '../error/BadRequest.Error';
 import { Password } from '../services/password';
 import jwt from 'jsonwebtoken';
 const router = express.Router();
@@ -29,15 +29,18 @@ router.post('/api/users/signin',[
                     })
 
                     if(!existingUser){
-                        throw new BadRequestError('User Not found');
+                        throw new BadRequest();
                     }
 
                     const passwordmatch = await Password.compare(existingUser.password, password);
 
                     if(!passwordmatch){
-                        throw new BadRequestError('Invalid Password');
+                        throw new BadRequest();
                     }
 
+                         if (!process.env.JWT_KEY) {
+                            throw new Error('JWT_KEY must be defined');
+                         }
                          const userJwt = jwt.sign({
                             id: existingUser.id,
                             email: existingUser.email
